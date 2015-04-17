@@ -3,6 +3,7 @@ package com.howtomakemoney.view;
 import java.util.Calendar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -12,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import com.howtomakemoney.R;
+import com.howtomakemoney.TransitionTestActivity;
 import com.howtomakemoney.model.Tip;
 import com.howtomakemoney.model.storage.DataBaseHandler;
 import com.howtomakemoney.model.storage.LocalIndex;
@@ -30,32 +32,42 @@ public class MainActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		if(LocalIndex.LoadInt(context) != 0)
-			i = LocalIndex.LoadInt(context);
-		//LocalIndex.SaveInt("index", i,context);
+//		if(LocalIndex.LoadInt(context) != 0)
+//			i = LocalIndex.LoadInt(context);
+//		//LocalIndex.SaveInt("index", i,context);
 		dataManager = new SQLDataManager(this);
 		long createTime = Calendar.getInstance().get(Calendar.MILLISECOND);
-		// Tip tip0 = new Tip("0","Time is money. if you won't work, you'll save time - you will save money!",
-		//	"S.Zadok",createTime,true);
-		//  Tip tip1 = new Tip("1","MONEY FOR NOTHING!!!!!",
-		//		"O.Hadad",createTime,true);
-		// dataManager.InsertTip(tip0);
-		// dataManager.InsertTip(tip1);
+		 Tip tip0 = new Tip("0","Time is money. if you won't work, you'll save time - you will save money!",
+			"S.Zadok",createTime,true);
+		  Tip tip1 = new Tip("1","MONEY FOR NOTHING!!!!!",
+				"O.Hadad",createTime,true);
+		  Tip tip2 = new Tip("2","lo nihnas maspik or",
+					"O.Hadad",createTime,true);
+		  Tip tip3 = new Tip("3","Money Money Money Money Money Money Money Money Money Money Money Money Money Money Money Money Money Money Money Money Money ",
+					"O.Hadad <3",createTime,true);
+		 dataManager.InsertTip(tip0);
+		 dataManager.InsertTip(tip1);
+		 dataManager.InsertTip(tip2);
+		 dataManager.InsertTip(tip3);
 		Tip openTip = dataManager.GetTip(i);
-		tv1 = (TextView)findViewById(R.id.tipContent);
-		tv1.setText(ArrangeTip(openTip.getContent(), openTip.getAuther()));
-		tv1.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				i = LocalIndex.LoadInt(context)+1;
-				LocalIndex.SaveInt("index", i,context);
-				Tip tip = dataManager.GetTip(i);
-				tv1.setText(ArrangeTip(tip.getContent(), tip.getAuther()));
-
-			}
-		});
+//		tv1 = (TextView)findViewById(R.id.tipContent);
+//		tv1.setText(ArrangeTip(openTip.getContent(), openTip.getAuther()));
+//		tv1.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				i = LocalIndex.LoadInt(context)+1;
+//				LocalIndex.SaveInt("index", i,context);
+//				Tip tip = dataManager.GetTip(i);
+//				tv1.setText(ArrangeTip(tip.getContent(), tip.getAuther()));
+//
+//			}
+//		});
+		
+		Intent i = new Intent(this, TransitionTestActivity.class);
+		startActivity(i);
+		finish();
 	}
 
 

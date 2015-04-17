@@ -1,11 +1,9 @@
 package com.howtomakemoney.model.storage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -51,11 +49,6 @@ public class SQLDataManager extends SQLiteOpenHelper implements DataBaseHandler 
 
 
 
-
-
-
-
-
 	/************************************************************************
 	 ************************************************************************ 
 	 ************************ SQL manager methods ***************************
@@ -98,7 +91,6 @@ public class SQLDataManager extends SQLiteOpenHelper implements DataBaseHandler 
 		values.put(SQLDataManager.KEY_AUTHER, tip.getAuther());
 		values.put(SQLDataManager.KEY_CREATE_TIME, tip.getCreateTime());
 		values.put(SQLDataManager.KEY_IS_FAVORITE, tip.isFavorite());
-		ContentValues group_dilemmas_table_values = new ContentValues();
 
 		// Inserting Row
 		db.insert(SQLDataManager.TABLE_MONEY, null, values);
@@ -143,36 +135,35 @@ public class SQLDataManager extends SQLiteOpenHelper implements DataBaseHandler 
 	}
 
 	@Override
-	public Tip GetTip(int i) {
+	public Tip GetTip(int index) {
 		/* this function returns a list of all the messages of a certain group */
-
-		SQLiteDatabase db = this.getWritableDatabase();
-		String tipId, tipContent, tipAuther, createTime, isFavorite;
 		Tip tip = null;
-		String selectVetosQuery = "SELECT * FROM " + TABLE_MONEY+ " WHERE " 
-				+ KEY_ID + " = "+ '"' + i + '"';
-		Cursor cursorTip = db.rawQuery(selectVetosQuery, null);
-		if (!cursorTip.moveToFirst()) {
-			i = 0;
-			LocalIndex.SaveInt("index",i,context);
-			selectVetosQuery = "SELECT * FROM " + TABLE_MONEY+ " WHERE " 
-					+ KEY_ID + " = "+ '"' + i + '"';
-			cursorTip = db.rawQuery(selectVetosQuery, null);
-			cursorTip.moveToFirst();
+		SQLiteDatabase db = this.getReadableDatabase();
+		String tipId, tipContent, tipAuther, createTime, isFavorite;
+		
+		Cursor cursorTip = db.rawQuery("select * from " + TABLE_MONEY + " where " + KEY_ID + " = ?", new String[] 
+				{String.valueOf(index)}); 
+
+		if (cursorTip.moveToFirst()) {
+			tipId = cursorTip.getString(0);
+			tipContent = cursorTip.getString(1);
+			tipAuther = cursorTip.getString(2);
+			createTime = cursorTip.getString(3);
+			long tipCreateTime = Long.parseLong(createTime);
+			isFavorite = cursorTip.getString(4);
+			boolean tipIsFavorite = Boolean.valueOf(isFavorite);
+			tip = new Tip(tipId,tipContent,tipAuther,tipCreateTime,tipIsFavorite);
 		}
-
-		tipId = cursorTip.getString(0);
-		tipContent = cursorTip.getString(1);
-		tipAuther = cursorTip.getString(2);
-		createTime = cursorTip.getString(3);
-		long tipCreateTime = Long.parseLong(createTime);
-		isFavorite = cursorTip.getString(4);
-		boolean tipIsFavorite = Boolean.valueOf(isFavorite);
-		tip = new Tip(tipId,tipContent,tipAuther,tipCreateTime,tipIsFavorite);
-
-
 		db.close();
 		return tip;
 	}
 
+	@Override
+	public int countTips() {
+		// TODO Auto-generated method stub
+		SQLiteDatabase db = this.getReadableDatabase();
+		return (int) DatabaseUtils.queryNumEntries(db, TABLE_MONEY);
+	}
+
+	
 }
